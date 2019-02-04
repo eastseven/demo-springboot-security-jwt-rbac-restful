@@ -25,11 +25,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] SWAGGER2 = {
             "/v2/api-docs", "/swagger-resources/**/**", "/swagger-ui.html", "/webjars/**/**/**", "/csrf", "/"
     };
+
+    @Autowired
+    private JwtAccessDecisionManager accessDecisionManager;
 
     @Autowired
     private JwtSecurityInterceptor securityInterceptor;
@@ -82,7 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
                 .authorizeRequests()
-
+                .accessDecisionManager(accessDecisionManager)
                 // Un-secure H2 Database
                 .antMatchers("/h2-console/**/**").permitAll()
                 .antMatchers(SWAGGER2).permitAll()

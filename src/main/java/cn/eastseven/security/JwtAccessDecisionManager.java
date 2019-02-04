@@ -6,6 +6,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.web.FilterInvocation;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -19,7 +21,26 @@ public class JwtAccessDecisionManager implements AccessDecisionManager {
 
     @Override
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> collection) throws AccessDeniedException, InsufficientAuthenticationException {
-        log.debug(">>> decide, authentication={}, object={}, ConfigAttributeCollection={}", authentication, o, collection);
+
+        log.debug(">>> decide, authentication={}", authentication.getPrincipal());
+        log.debug(">>> decide, object={}, {}", o.getClass(), o);
+        log.debug(">>> decide, ConfigAttributeCollection={}", collection);
+
+        if (o instanceof FilterInvocation) {
+            FilterInvocation fi = (FilterInvocation) o;
+            String url = fi.getRequestUrl();
+            String method = fi.getRequest().getMethod();
+            log.debug(">>> decide, method={}, url={}", method, url);
+
+            collection.forEach(attribute -> {
+                String value = attribute.getAttribute();
+                for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+                    log.debug(">>> attr={}, grantedAuthority={}", value, grantedAuthority.getAuthority());
+                }
+            });
+        }
+
+        // throw new AccessDeniedException("no right");
     }
 
     @Override

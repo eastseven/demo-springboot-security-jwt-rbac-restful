@@ -1,6 +1,7 @@
 package cn.eastseven.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,6 +11,7 @@ import java.util.Date;
 /**
  * Created by stephan on 20.03.16.
  */
+@ToString
 public class JwtUser implements UserDetails {
 
     private final String id;

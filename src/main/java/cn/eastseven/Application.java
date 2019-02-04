@@ -1,9 +1,6 @@
 package cn.eastseven;
 
-import cn.eastseven.security.RoleEntity;
-import cn.eastseven.security.RoleRepository;
-import cn.eastseven.security.UserEntity;
-import cn.eastseven.security.UserRepository;
+import cn.eastseven.security.*;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
@@ -61,6 +59,21 @@ public class Application implements CommandLineRunner {
                     log.debug(">>> {}", user);
                 });
             }
+        }
+
+        // init permission
+        ctx.getBean(PermissionRepository.class).deleteAll();
+        for (HttpMethod httpMethod : HttpMethod.values()) {
+            String method = httpMethod.name().toLowerCase();
+            String url = "/users";
+            String name = "PRIVILEGE_" + url.replaceFirst("/", "") + "_" + method;
+            PermissionEntity permission = new PermissionEntity();
+            permission.setId(name.toUpperCase());
+            permission.setName(name.toUpperCase());
+            permission.setUrl(url);
+            permission.setMethod(method);
+            ctx.getBean(PermissionRepository.class).save(permission);
+            log.debug(">>> {}", permission);
         }
     }
 }
