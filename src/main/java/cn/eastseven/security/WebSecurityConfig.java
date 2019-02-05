@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 /**
  * @author d7
+ * @see [Spring Security学习目录](https://www.jianshu.com/p/6c87b8304fc9)
  */
 @Configuration
 @EnableWebSecurity
@@ -33,6 +35,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private JwtAccessDecisionManager accessDecisionManager;
+
+    @Autowired
+    private JwtFilterInvocationSecurityMetadataSource securityMetadataSource;
 
     @Autowired
     private JwtSecurityInterceptor securityInterceptor;
@@ -85,7 +90,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 
                 .authorizeRequests()
-                .accessDecisionManager(accessDecisionManager)
+                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+                    @Override
+                    public <O extends FilterSecurityInterceptor> O postProcess(O fsi) {
+                        fsi.setSecurityMetadataSource(securityMetadataSource);
+                        fsi.setAccessDecisionManager(accessDecisionManager);
+                        return fsi;
+                    }
+                })
+                //.accessDecisionManager(accessDecisionManager)
                 // Un-secure H2 Database
                 .antMatchers("/h2-console/**/**").permitAll()
                 .antMatchers(SWAGGER2).permitAll()
@@ -94,9 +107,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         httpSecurity
                 .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-        httpSecurity
-                .addFilterBefore(securityInterceptor, FilterSecurityInterceptor.class);
 
         // disable page caching
         httpSecurity

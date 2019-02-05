@@ -1,6 +1,7 @@
 package cn.eastseven.security;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
@@ -11,6 +12,12 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import static org.apache.commons.collections4.IterableUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * @author d7
@@ -19,28 +26,64 @@ import java.util.Collection;
 @Component
 public class JwtAccessDecisionManager implements AccessDecisionManager {
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Override
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> collection) throws AccessDeniedException, InsufficientAuthenticationException {
+        log.debug(">>> collection={}, {}", isEmpty(collection), collection);
 
-        log.debug(">>> decide, authentication={}", authentication.getPrincipal());
-        log.debug(">>> decide, object={}, {}", o.getClass(), o);
-        log.debug(">>> decide, ConfigAttributeCollection={}", collection);
-
-        if (o instanceof FilterInvocation) {
-            FilterInvocation fi = (FilterInvocation) o;
-            String url = fi.getRequestUrl();
-            String method = fi.getRequest().getMethod();
-            log.debug(">>> decide, method={}, url={}", method, url);
-
-            collection.forEach(attribute -> {
-                String value = attribute.getAttribute();
-                for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
-                    log.debug(">>> attr={}, grantedAuthority={}", value, grantedAuthority.getAuthority());
-                }
-            });
+        if (isEmpty(collection)) {
+            return;
         }
 
-        // throw new AccessDeniedException("no right");
+        for (ConfigAttribute configAttribute : collection) {
+            if (isBlank(configAttribute.getAttribute())) {
+                log.debug(">>> configAttribute={}, {}", configAttribute.getClass(), configAttribute.getAttribute());
+                return;
+            }
+        }
+
+        JwtUser user = null;
+        FilterInvocation filterInvocation = null;
+
+        if (authentication.getPrincipal() instanceof JwtUser) {
+            user = (JwtUser) authentication.getPrincipal();
+        }
+
+        if (o instanceof FilterInvocation) {
+            filterInvocation = (FilterInvocation) o;
+        }
+
+        if (Objects.nonNull(user) && Objects.nonNull(filterInvocation)) {
+            String url = filterInvocation.getRequestUrl();
+            String method = filterInvocation.getRequest().getMethod();
+
+            for (ConfigAttribute configAttribute : collection) {
+                // 当前请求
+                String attribute = configAttribute.getAttribute();
+                for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+                    // 用户角色
+                    Optional<RoleEntity> role = roleRepository.findById(grantedAuthority.getAuthority());
+                    if (role.isPresent()) {
+                        List<PermissionEntity> permissions = role.get().getPermissions();
+                        for (int index = 0; index < permissions.size(); index++) {
+                            PermissionEntity permission = permissions.get(index);
+                            log.debug(">>> attribute={}, {}", attribute, permission);
+                            // authenticated
+                        }
+                        long count = role.get().getPermissions().stream().filter(p -> p.getName().equalsIgnoreCase(attribute)).count();
+                        boolean bln = count > 0L;
+                        log.debug(">>> decide=[{}, {}], method={}, url={}, attribute={}, role={}", count, bln, method, url, attribute, role.get());
+                        if (bln) {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        throw new AccessDeniedException("no right");
     }
 
     @Override

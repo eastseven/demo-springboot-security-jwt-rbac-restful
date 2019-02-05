@@ -33,6 +33,22 @@ public class Application implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+        // init permission
+        ctx.getBean(PermissionRepository.class).deleteAll();
+        List<HttpMethod> httpMethodList = Lists.newArrayList(HttpMethod.DELETE, HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT);
+        for (HttpMethod httpMethod : httpMethodList) {
+            String method = httpMethod.name().toLowerCase();
+            String url = "/users";
+            String name = "PRIVILEGE_" + url.replaceFirst("/", "") + "_" + method;
+            PermissionEntity permission = new PermissionEntity();
+            permission.setId(name.toUpperCase());
+            permission.setName(name.toUpperCase());
+            permission.setUrl(url);
+            permission.setMethod(method);
+            ctx.getBean(PermissionRepository.class).save(permission);
+            log.debug(">>> {}", permission);
+        }
+
         ctx.getBean(RoleRepository.class).deleteAll();
         long roleCount = ctx.getBean(RoleRepository.class).count();
         if (roleCount == 0L) {
@@ -44,6 +60,21 @@ public class Application implements CommandLineRunner {
 
             ctx.getBean(RoleRepository.class).saveAll(roles);
         }
+
+        // init role permission
+        ctx.getBean(RoleRepository.class).findAll().forEach(role -> {
+            List<PermissionEntity> permissionList = ctx.getBean(PermissionRepository.class).findAll();
+            if ("ROLE_ADMIN".equals(role.getId())) {
+                role.setPermissions(permissionList);
+            } else if ("ROLE_USER".equals(role.getId())) {
+                List<PermissionEntity> list = permissionList.stream()
+                        .filter(p -> "POST".equalsIgnoreCase(p.getMethod()))
+                        .collect(Collectors.toList());
+                log.debug(">>> ROLE_USER permissions={}", list);
+                role.setPermissions(list);
+            }
+            ctx.getBean(RoleRepository.class).save(role);
+        });
 
         ctx.getBean(UserRepository.class).deleteAll();
         long userCount = ctx.getBean(UserRepository.class).count();
@@ -59,21 +90,6 @@ public class Application implements CommandLineRunner {
                     log.debug(">>> {}", user);
                 });
             }
-        }
-
-        // init permission
-        ctx.getBean(PermissionRepository.class).deleteAll();
-        for (HttpMethod httpMethod : HttpMethod.values()) {
-            String method = httpMethod.name().toLowerCase();
-            String url = "/users";
-            String name = "PRIVILEGE_" + url.replaceFirst("/", "") + "_" + method;
-            PermissionEntity permission = new PermissionEntity();
-            permission.setId(name.toUpperCase());
-            permission.setName(name.toUpperCase());
-            permission.setUrl(url);
-            permission.setMethod(method);
-            ctx.getBean(PermissionRepository.class).save(permission);
-            log.debug(">>> {}", permission);
         }
     }
 }

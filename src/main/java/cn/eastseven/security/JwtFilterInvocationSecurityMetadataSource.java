@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
@@ -32,12 +33,15 @@ public class JwtFilterInvocationSecurityMetadataSource implements FilterInvocati
         final String url = filterInvocation.getRequestUrl();
         final String method = filterInvocation.getRequest().getMethod();
         String id = "PRIVILEGE_" + url.replaceFirst("/", "") + "_" + method;
-        id = id.toUpperCase();
+        log.debug(">>> getAttributes id={}", id);
 
         List<PermissionEntity> permissionList = permissionRepository.findAll();
         for (PermissionEntity permission : permissionList) {
-            if (StringUtils.equalsAnyIgnoreCase(id, permission.getId())) {
-                return Sets.newHashSet(new SecurityConfig(permission.getName()));
+            String permissionId = id.toUpperCase();
+            if (StringUtils.equalsAnyIgnoreCase(permissionId, permission.getId())) {
+                Set<ConfigAttribute> result = Sets.newHashSet(new SecurityConfig(permission.getName()));
+                log.debug(">>> getAttributes return {}", result);
+                return result;
             }
         }
 
@@ -47,7 +51,8 @@ public class JwtFilterInvocationSecurityMetadataSource implements FilterInvocati
     @Override
     public Collection<ConfigAttribute> getAllConfigAttributes() {
         // TODO 加载所有Permission
-        return Sets.newHashSet(load());
+        // return Sets.newHashSet(load());
+        return null;
     }
 
     @Override
