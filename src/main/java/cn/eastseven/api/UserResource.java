@@ -2,45 +2,26 @@ package cn.eastseven.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * @author d7
  */
 @Api(value = "users", tags = "用户", description = "接口")
-@RestController
-@RequestMapping(value = "users", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class UserResource {
+public interface UserResource {
 
     @ApiOperation("列表")
-    @GetMapping
-    Object list() {
-        return null;
-    }
+    Object list();
 
     @ApiOperation("详情")
-    @GetMapping("/{id}")
-    Object get(@PathVariable String id) {
-        return null;
-    }
+    Object get(String id);
 
     @ApiOperation("添加")
-    @PostMapping
-    Object add(@RequestBody Object request) {
-        return null;
-    }
+    Object add(Object request);
 
     @ApiOperation("修改")
-    @PutMapping
-    Object modify(@RequestBody Object request) {
-        return null;
-    }
+    Object modify(Object request);
 
     @ApiOperation("删除")
-    @DeleteMapping("/{id}")
-    Object remove(@PathVariable String id) {
-        return null;
-    }
+    Object remove(String id);
 }
 

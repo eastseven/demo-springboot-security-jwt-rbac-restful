@@ -32,7 +32,6 @@ public class JwtAccessDecisionManager implements AccessDecisionManager {
     @Override
     public void decide(Authentication authentication, Object o, Collection<ConfigAttribute> collection) throws AccessDeniedException, InsufficientAuthenticationException {
         log.debug(">>> collection={}, {}", isEmpty(collection), collection);
-
         if (isEmpty(collection)) {
             return;
         }
@@ -56,9 +55,6 @@ public class JwtAccessDecisionManager implements AccessDecisionManager {
         }
 
         if (Objects.nonNull(user) && Objects.nonNull(filterInvocation)) {
-            String url = filterInvocation.getRequestUrl();
-            String method = filterInvocation.getRequest().getMethod();
-
             for (ConfigAttribute configAttribute : collection) {
                 // 当前请求
                 String attribute = configAttribute.getAttribute();
@@ -71,12 +67,9 @@ public class JwtAccessDecisionManager implements AccessDecisionManager {
                             PermissionEntity permission = permissions.get(index);
                             log.debug(">>> attribute={}, {}", attribute, permission);
                             // authenticated
-                        }
-                        long count = role.get().getPermissions().stream().filter(p -> p.getName().equalsIgnoreCase(attribute)).count();
-                        boolean bln = count > 0L;
-                        log.debug(">>> decide=[{}, {}], method={}, url={}, attribute={}, role={}", count, bln, method, url, attribute, role.get());
-                        if (bln) {
-                            return;
+                            if (permission.getId().equals(attribute)) {
+                                return;
+                            }
                         }
                     }
                 }

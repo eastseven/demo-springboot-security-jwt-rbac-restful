@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
@@ -30,18 +30,24 @@ public class JwtFilterInvocationSecurityMetadataSource implements FilterInvocati
     @Override
     public Collection<ConfigAttribute> getAttributes(Object o) throws IllegalArgumentException {
         FilterInvocation filterInvocation = (FilterInvocation) o;
-        final String url = filterInvocation.getRequestUrl();
-        final String method = filterInvocation.getRequest().getMethod();
-        String id = "PRIVILEGE_" + url.replaceFirst("/", "") + "_" + method;
-        log.debug(">>> getAttributes id={}", id);
+        final String requestUrl = filterInvocation.getRequestUrl();
+        final String requestMethod = filterInvocation.getRequest().getMethod();
+        String id = "privilege_" + requestUrl + "_" + requestMethod.toLowerCase();
+        log.debug(">>> getAttributes id={}, url={}, method={}", id, requestUrl, requestMethod);
+
+        if ("/auth".equalsIgnoreCase(requestUrl)) {
+            return null;
+        }
 
         List<PermissionEntity> permissionList = permissionRepository.findAll();
         for (PermissionEntity permission : permissionList) {
-            String permissionId = id.toUpperCase();
-            if (StringUtils.equalsAnyIgnoreCase(permissionId, permission.getId())) {
-                Set<ConfigAttribute> result = Sets.newHashSet(new SecurityConfig(permission.getName()));
-                log.debug(">>> getAttributes return {}", result);
-                return result;
+            String url = permission.getUrl();
+            String method = permission.getMethod();
+            boolean match = Pattern.compile(url).matcher(requestUrl).find();
+
+            if (StringUtils.equalsIgnoreCase(method, requestMethod) && match) {
+                // AntPathMatcher matcher = new AntPathMatcher(url);
+                return Sets.newHashSet(new SecurityConfig(permission.getName()));
             }
         }
 

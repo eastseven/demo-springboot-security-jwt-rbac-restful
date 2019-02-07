@@ -13,6 +13,15 @@ import java.io.Serializable;
 @Document(collection = "t_permission")
 public class PermissionEntity implements Serializable {
 
+    public PermissionEntity() {}
+
+    public PermissionEntity(String id, String name, String url, String method) {
+        this.id = id;
+        this.name = name;
+        this.url = url;
+        this.method = method;
+    }
+
     @Id
     private String id;
 

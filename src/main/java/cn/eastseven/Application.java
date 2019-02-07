@@ -1,18 +1,23 @@
 package cn.eastseven;
 
+import cn.eastseven.config.WebAppConfig;
 import cn.eastseven.security.*;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -32,21 +37,53 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        initData();
+    }
 
+    private void initData() {
         // init permission
         ctx.getBean(PermissionRepository.class).deleteAll();
-        List<HttpMethod> httpMethodList = Lists.newArrayList(HttpMethod.DELETE, HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT);
-        for (HttpMethod httpMethod : httpMethodList) {
-            String method = httpMethod.name().toLowerCase();
-            String url = "/users";
-            String name = "PRIVILEGE_" + url.replaceFirst("/", "") + "_" + method;
-            PermissionEntity permission = new PermissionEntity();
-            permission.setId(name.toUpperCase());
-            permission.setName(name.toUpperCase());
-            permission.setUrl(url);
-            permission.setMethod(method);
-            ctx.getBean(PermissionRepository.class).save(permission);
-            log.debug(">>> {}", permission);
+
+        Map<RequestMappingInfo, HandlerMethod> map = ctx.getBean(WebAppConfig.class).getRequestMappingHandlerMapping().getHandlerMethods();
+        map.forEach((k, v) -> {
+            log.debug(">>> url, Patterns={}", k.getPatternsCondition().getPatterns());
+            log.debug(">>> url, Methods={}\n", k.getMethodsCondition().getMethods());
+        });
+
+        for (RequestMappingInfo requestMappingInfo : map.keySet()) {
+            Set<RequestMethod> requestMethods = requestMappingInfo.getMethodsCondition().getMethods();
+            if (requestMethods.isEmpty()) {
+                continue;
+            }
+
+            Set<String> patterns = requestMappingInfo.getPatternsCondition().getPatterns();
+            if (patterns.isEmpty()) {
+                continue;
+            }
+
+            for (RequestMethod requestMethod : requestMethods) {
+                switch (requestMethod) {
+                    case GET:
+                    case PUT:
+                    case POST:
+                    case DELETE:
+                    case OPTIONS:
+                        for (String pattern : patterns) {
+                            String url = RegExUtils.replaceAll(pattern, "\\{.+}", "*").toLowerCase();
+                            String id = "privilege_" + pattern + "_" + requestMethod.name().toLowerCase();
+                            String method = requestMethod.name().toLowerCase();
+                            PermissionEntity permission = new PermissionEntity();
+                            permission.setId(id);
+                            permission.setUrl(url);
+                            permission.setName(id);
+                            permission.setMethod(method);
+
+                            ctx.getBean(PermissionRepository.class).save(permission);
+                            log.debug(">>> {}", permission);
+                        }
+                    default:
+                }
+            }
         }
 
         ctx.getBean(RoleRepository.class).deleteAll();

@@ -40,9 +40,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtFilterInvocationSecurityMetadataSource securityMetadataSource;
 
     @Autowired
-    private JwtSecurityInterceptor securityInterceptor;
-
-    @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
 
     @Autowired
@@ -88,8 +85,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // don't create session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-
                 .authorizeRequests()
+
+                //.accessDecisionManager(accessDecisionManager)
+                // Un-secure H2 Database
+                .antMatchers("/h2-console/**/**").permitAll()
+                .antMatchers(SWAGGER2).permitAll()
+                .antMatchers("/auth/**").permitAll()
+
+                .anyRequest().authenticated()
+
                 .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
                     @Override
                     public <O extends FilterSecurityInterceptor> O postProcess(O fsi) {
@@ -97,13 +102,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         fsi.setAccessDecisionManager(accessDecisionManager);
                         return fsi;
                     }
-                })
-                //.accessDecisionManager(accessDecisionManager)
-                // Un-secure H2 Database
-                .antMatchers("/h2-console/**/**").permitAll()
-                .antMatchers(SWAGGER2).permitAll()
-                .antMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated();
+                });
 
         httpSecurity
                 .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
