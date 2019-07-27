@@ -8,7 +8,6 @@ import lombok.ToString;
 import java.io.Serializable;
 
 /**
- * @param <T>
  * @author d7
  */
 @Getter

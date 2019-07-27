@@ -11,18 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @see https://github.com/SpringForAll/spring-boot-starter-swagger/blob/master/README.md
  */
 @Configuration
-//@EnableSwagger2
 @EnableSwagger2Doc
 public class Swagger2Config {
-
-    /*@Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
-                .build();
-    }*/
-
 
 }
