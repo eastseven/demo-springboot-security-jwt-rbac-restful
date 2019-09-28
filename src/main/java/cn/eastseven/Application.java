@@ -2,6 +2,7 @@ package cn.eastseven;
 
 import cn.eastseven.config.WebAppConfig;
 import cn.eastseven.security.*;
+import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RegExUtils;
@@ -107,7 +108,6 @@ public class Application implements CommandLineRunner {
                 List<PermissionEntity> list = permissionList.stream()
                         .filter(p -> "POST".equalsIgnoreCase(p.getMethod()))
                         .collect(Collectors.toList());
-                log.debug(">>> ROLE_USER permissions={}", list);
                 role.setPermissions(list);
             }
             ctx.getBean(RoleRepository.class).save(role);
@@ -117,14 +117,17 @@ public class Application implements CommandLineRunner {
         long userCount = ctx.getBean(UserRepository.class).count();
         if (userCount == 0L) {
             roleCount = ctx.getBean(RoleRepository.class).count();
+            Faker faker = new Faker();
             if (roleCount > 0) {
                 BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
                 ctx.getBean(RoleRepository.class).findAll().forEach(role -> {
                     String username = role.getName().toLowerCase().replaceFirst("role_", "");
                     UserEntity user = new UserEntity(username, passwordEncoder.encode("123456"));
+                    user.setFirstname(faker.name().firstName());
+                    user.setLastname(faker.name().lastName());
                     user.getRoles().add(role);
                     ctx.getBean(UserRepository.class).save(user);
-                    log.debug(">>> {}", user);
+                    log.info("系统用户：username=[{}], password=[123456]", user.getUsername());
                 });
             }
         }

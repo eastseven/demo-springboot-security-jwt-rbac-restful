@@ -1,13 +1,43 @@
 package cn.eastseven.api;
 
+import cn.eastseven.api.dto.UsernamePasswordRequest;
+import cn.eastseven.model.ApiResponse;
+import cn.eastseven.security.JwtUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * @author d7
  */
 @Api(value = "users", tags = "用户")
 public interface UserResource {
+
+    /**
+     * 登录
+     *
+     * @param request 账号密码
+     * @return 结果
+     */
+    @ApiOperation("登录")
+    ApiResponse login(UsernamePasswordRequest request);
+
+    /**
+     * 登出
+     *
+     * @return 结果
+     */
+    @ApiOperation("登出")
+    ApiResponse logout();
+
+    /**
+     * 个人信息
+     *
+     * @param user 登录用户
+     * @return 结果
+     */
+    @ApiOperation("信息")
+    ApiResponse info(@ApiIgnore JwtUser user);
 
     /**
      * 列表

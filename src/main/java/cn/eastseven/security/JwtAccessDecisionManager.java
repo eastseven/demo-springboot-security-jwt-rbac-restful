@@ -65,9 +65,9 @@ public class JwtAccessDecisionManager implements AccessDecisionManager {
                         List<PermissionEntity> permissions = role.get().getPermissions();
                         for (int index = 0; index < permissions.size(); index++) {
                             PermissionEntity permission = permissions.get(index);
-                            log.debug(">>> attribute={}, {}", attribute, permission);
-                            // authenticated
-                            if (permission.getId().equals(attribute)) {
+                            boolean authenticated = permission.getId().equals(attribute);
+                            log.debug(">>> authenticated=[{}] attribute={}, {}", authenticated, attribute, permission);
+                            if (authenticated) {
                                 return;
                             }
                         }

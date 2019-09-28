@@ -33,6 +33,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public Object runtimeExceptionHandle(HttpServletRequest request, RuntimeException e) {
+        log.error("", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.ofError(50002, e.getMessage()));
     }
 
