@@ -1,5 +1,6 @@
 package cn.eastseven.security;
 
+import cn.eastseven.security.model.UserEntity;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;

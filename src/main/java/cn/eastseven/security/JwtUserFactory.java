@@ -1,5 +1,7 @@
 package cn.eastseven.security;
 
+import cn.eastseven.security.model.RoleEntity;
+import cn.eastseven.security.model.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

@@ -1,6 +1,6 @@
 package cn.eastseven.service;
 
-import cn.eastseven.security.UserEntity;
+import cn.eastseven.security.model.UserEntity;
 
 /**
  * @author eastseven

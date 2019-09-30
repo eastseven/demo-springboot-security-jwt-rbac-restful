@@ -1,4 +1,4 @@
-package cn.eastseven.security;
+package cn.eastseven.security.exception;
 
 public class AuthenticationException extends RuntimeException {
     public AuthenticationException(String message, Throwable cause) {

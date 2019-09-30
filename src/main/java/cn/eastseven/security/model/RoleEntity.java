@@ -1,4 +1,4 @@
-package cn.eastseven.security;
+package cn.eastseven.security.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -13,7 +13,7 @@ import java.util.List;
  * 角色
  */
 @Data
-@Document(collection = "t_role")
+@Document("t_role")
 public class RoleEntity implements Serializable {
 
     public RoleEntity() {
@@ -36,4 +36,7 @@ public class RoleEntity implements Serializable {
 
     @DBRef(lazy = true)
     private List<PermissionEntity> permissions;
+
+    @DBRef(lazy = true)
+    private List<MenuEntity> menus;
 }

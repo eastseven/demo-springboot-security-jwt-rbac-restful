@@ -1,5 +1,6 @@
-package cn.eastseven.security;
+package cn.eastseven.security.model;
 
+import cn.eastseven.security.Authority;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import org.springframework.data.annotation.Id;

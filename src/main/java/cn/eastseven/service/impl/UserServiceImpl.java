@@ -2,8 +2,8 @@ package cn.eastseven.service.impl;
 
 import cn.eastseven.security.JwtTokenUtil;
 import cn.eastseven.security.JwtUserDetailsService;
-import cn.eastseven.security.UserEntity;
-import cn.eastseven.security.UserRepository;
+import cn.eastseven.security.model.UserEntity;
+import cn.eastseven.security.repository.UserRepository;
 import cn.eastseven.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

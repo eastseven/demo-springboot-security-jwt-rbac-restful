@@ -1,5 +1,7 @@
 package cn.eastseven.security;
 
+import cn.eastseven.security.model.PermissionEntity;
+import cn.eastseven.security.repository.PermissionRepository;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

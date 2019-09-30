@@ -1,4 +1,4 @@
-package cn.eastseven.security;
+package cn.eastseven.security.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

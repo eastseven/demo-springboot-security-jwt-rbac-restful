@@ -1,6 +1,6 @@
 package cn.eastseven.api;
 
-import cn.eastseven.security.AuthenticationException;
+import cn.eastseven.security.exception.AuthenticationException;
 import cn.eastseven.security.JwtAuthenticationRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

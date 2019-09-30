@@ -1,5 +1,8 @@
 package cn.eastseven.security;
 
+import cn.eastseven.security.model.PermissionEntity;
+import cn.eastseven.security.model.RoleEntity;
+import cn.eastseven.security.repository.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionManager;

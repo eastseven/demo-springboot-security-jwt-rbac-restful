@@ -1,7 +1,15 @@
 package cn.eastseven;
 
 import cn.eastseven.config.WebAppConfig;
-import cn.eastseven.security.*;
+import cn.eastseven.security.model.MenuEntity;
+import cn.eastseven.security.model.PermissionEntity;
+import cn.eastseven.security.model.RoleEntity;
+import cn.eastseven.security.model.UserEntity;
+import cn.eastseven.security.repository.MenuRepository;
+import cn.eastseven.security.repository.PermissionRepository;
+import cn.eastseven.security.repository.RoleRepository;
+import cn.eastseven.security.repository.UserRepository;
+import cn.eastseven.service.MenuService;
 import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -42,15 +50,17 @@ public class Application implements CommandLineRunner {
     }
 
     private void initData() {
+        MenuRepository menuRepository = ctx.getBean(MenuRepository.class);
+        PermissionRepository permissionRepository = ctx.getBean(PermissionRepository.class);
+        RoleRepository roleRepository = ctx.getBean(RoleRepository.class);
+        UserRepository userRepository = ctx.getBean(UserRepository.class);
+        // init menu
+        ctx.getBean(MenuService.class).init();
         // init permission
-        ctx.getBean(PermissionRepository.class).deleteAll();
+        permissionRepository.deleteAll();
 
-        Map<RequestMappingInfo, HandlerMethod> map = ctx.getBean(WebAppConfig.class).getRequestMappingHandlerMapping().getHandlerMethods();
-        map.forEach((k, v) -> {
-            log.debug(">>> url, Patterns={}", k.getPatternsCondition().getPatterns());
-            log.debug(">>> url, Methods={}\n", k.getMethodsCondition().getMethods());
-        });
-
+        Map<RequestMappingInfo, HandlerMethod> map = ctx.getBean(WebAppConfig.class)
+                .getRequestMappingHandlerMapping().getHandlerMethods();
         for (RequestMappingInfo requestMappingInfo : map.keySet()) {
             Set<RequestMethod> requestMethods = requestMappingInfo.getMethodsCondition().getMethods();
             if (requestMethods.isEmpty()) {
@@ -79,16 +89,15 @@ public class Application implements CommandLineRunner {
                             permission.setName(id);
                             permission.setMethod(method);
 
-                            ctx.getBean(PermissionRepository.class).save(permission);
-                            log.debug(">>> {}", permission);
+                            permissionRepository.save(permission);
                         }
                     default:
                 }
             }
         }
 
-        ctx.getBean(RoleRepository.class).deleteAll();
-        long roleCount = ctx.getBean(RoleRepository.class).count();
+        roleRepository.deleteAll();
+        long roleCount = roleRepository.count();
         if (roleCount == 0L) {
             // user, admin
             List<RoleEntity> roles = Lists.newArrayList("ROLE_USER", "ROLE_ADMIN")
@@ -96,31 +105,33 @@ public class Application implements CommandLineRunner {
                     .map(RoleEntity::new)
                     .collect(Collectors.toList());
 
-            ctx.getBean(RoleRepository.class).saveAll(roles);
+            roleRepository.saveAll(roles);
         }
 
         // init role permission
-        ctx.getBean(RoleRepository.class).findAll().forEach(role -> {
-            List<PermissionEntity> permissionList = ctx.getBean(PermissionRepository.class).findAll();
+        roleRepository.findAll().forEach(role -> {
+            List<PermissionEntity> permissionList = permissionRepository.findAll();
             if ("ROLE_ADMIN".equals(role.getId())) {
+                // 管理员拥有所有权限及菜单
                 role.setPermissions(permissionList);
+                role.setMenus(menuRepository.findAll());
             } else if ("ROLE_USER".equals(role.getId())) {
                 List<PermissionEntity> list = permissionList.stream()
                         .filter(p -> "POST".equalsIgnoreCase(p.getMethod()))
                         .collect(Collectors.toList());
                 role.setPermissions(list);
             }
-            ctx.getBean(RoleRepository.class).save(role);
+            roleRepository.save(role);
         });
 
-        ctx.getBean(UserRepository.class).deleteAll();
-        long userCount = ctx.getBean(UserRepository.class).count();
+        userRepository.deleteAll();
+        long userCount = userRepository.count();
         if (userCount == 0L) {
-            roleCount = ctx.getBean(RoleRepository.class).count();
+            roleCount = roleRepository.count();
             Faker faker = new Faker();
             if (roleCount > 0) {
                 BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-                ctx.getBean(RoleRepository.class).findAll().forEach(role -> {
+                roleRepository.findAll().forEach(role -> {
                     String username = role.getName().toLowerCase().replaceFirst("role_", "");
                     UserEntity user = new UserEntity(username, passwordEncoder.encode("123456"));
                     user.setFirstname(faker.name().firstName());
@@ -131,6 +142,11 @@ public class Application implements CommandLineRunner {
                 });
             }
         }
+
+        log.info(">>> 初始化 Menu 数据[{}]条", menuRepository.count());
+        log.info(">>> 初始化 Permission 数据[{}]条", permissionRepository.count());
+        log.info(">>> 初始化 Role 数据[{}]条", roleRepository.count());
+        log.info(">>> 初始化 User 数据[{}]条", userRepository.count());
     }
 }
 

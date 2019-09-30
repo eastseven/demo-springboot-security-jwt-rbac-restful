@@ -1,5 +1,6 @@
-package cn.eastseven.security;
+package cn.eastseven.security.repository;
 
+import cn.eastseven.security.model.PermissionEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**

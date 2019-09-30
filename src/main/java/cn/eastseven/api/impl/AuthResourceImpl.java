@@ -3,6 +3,7 @@ package cn.eastseven.api.impl;
 import cn.eastseven.api.AuthResource;
 import cn.eastseven.model.ApiResponse;
 import cn.eastseven.security.*;
+import cn.eastseven.security.exception.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
