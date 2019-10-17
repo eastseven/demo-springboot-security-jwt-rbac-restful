@@ -42,10 +42,12 @@ public interface UserResource {
     /**
      * 列表
      *
+     * @param page Page
+     * @param size Size
      * @return 结果
      */
     @ApiOperation("列表")
-    Object list();
+    Object list(int page, int size);
 
     /**
      * 详情

@@ -1,6 +1,9 @@
 package cn.eastseven.service;
 
 import cn.eastseven.security.model.UserEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * @author eastseven
@@ -23,4 +26,12 @@ public interface UserService {
      * @return 结果
      */
     UserEntity get(String id);
+
+    /**
+     * 分页
+     *
+     * @param pageable Pageable
+     * @return 结果
+     */
+    Page<UserEntity> page(Pageable pageable);
 }

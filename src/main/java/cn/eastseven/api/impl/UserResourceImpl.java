@@ -3,13 +3,16 @@ package cn.eastseven.api.impl;
 import cn.eastseven.api.UserResource;
 import cn.eastseven.api.dto.TokenResponse;
 import cn.eastseven.api.dto.UserInfoResponse;
+import cn.eastseven.api.dto.UserSimpleDTO;
 import cn.eastseven.api.dto.UsernamePasswordRequest;
 import cn.eastseven.model.ApiResponse;
 import cn.eastseven.security.JwtUser;
+import cn.eastseven.security.annotation.CurrentUser;
 import cn.eastseven.security.model.RoleEntity;
 import cn.eastseven.security.model.UserEntity;
-import cn.eastseven.security.annotation.CurrentUser;
 import cn.eastseven.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -56,10 +59,12 @@ public class UserResourceImpl implements UserResource {
                 .build());
     }
 
-    @GetMapping
+    @GetMapping("/list")
     @Override
-    public Object list() {
-        return null;
+    public Object list(@RequestParam(defaultValue = "1") int page,
+                       @RequestParam(name = "limit", defaultValue = "10") int size) {
+        Page<UserEntity> pageResult = userService.page(PageRequest.of(page - 1, size));
+        return ApiResponse.of(pageResult.map(UserSimpleDTO::new));
     }
 
     @GetMapping("/{id}")

@@ -3,82 +3,12 @@
     {"name":"user", "title":"用户管理", "title2":"Users", "path": "system/user", "icon": "form", "roles": ["ROLE_ADMIN"]},
     {"name":"role", "title":"角色管理", "title2":"Roles", "path": "system/role", "icon": "form", "roles": ["ROLE_ADMIN"]},
     {"name":"permission", "title":"权限管理", "title2":"Permissions", "path": "system/permission", "icon": "form", "roles": ["ROLE_ADMIN"]},
-    {"name":"menu", "title":"菜单管理", "title2":"Menu", "path": "system/menu", "icon": "form", "roles": ["ROLE_ADMIN"]},
-    {"name":"password", "title":"密码修改", "title2":"SystemChangePassword", "path":"system/password", "icon":"form", "roles": ["ROLE_ADMIN"]}
-  ]},
+    {"name":"menu", "title":"菜单管理", "title2":"Menu", "path": "system/menu", "icon": "form", "roles": ["ROLE_ADMIN"]}
+  ]}
+  ,{"name":"password", "title":"密码修改", "title2":"ChangePassword", "icon": "form", "path": "password", "roles": ["ROLE_ADMIN", "ROLE_USER"]}
 
-  {"name":"merchant", "title":"商户管理", "title2":"Merchant" , "icon": "tree", "path": "merchant", "roles": ["ROLE_ADMIN"], "children": [
-    {"name":"index", "title":"商户列表", "title2":"MerchantList", "path": "merchant/index", "icon": "form", "roles": ["ROLE_ADMIN"]},
-    {"name":"category", "title":"商户分类", "title2":"MerchantCategory", "path": "merchant/category", "icon": "form", "roles": ["ROLE_ADMIN"]},
-    {"name":"add", "title":"添加商户", "title2":"MerchantAdd", "path": "merchant/add", "icon": "form", "roles": ["ROLE_ADMIN"]},
-    {"name":"audit", "title":"审核商户", "title2":"MerchantAudit", "path": "merchant/audit", "icon": "form", "roles": ["ROLE_ADMIN"]},
-    {"name":"assert", "title":"商户结算", "title2":"MerchantAsset", "path": "merchant/asset", "icon": "form", "roles": ["ROLE_ADMIN"]}
-  ]},
-
-  {"name":"stats", "title":"数据统计", "title2":"Stats", "icon": "form", "path": "stats/index", "roles": ["ROLE_USER"]},
-  {"name":"order", "title":"订单管理", "title2":"Order", "icon": "form", "path": "order/index", "roles": ["ROLE_ADMIN", "ROLE_USER"]},
-
-  {"name":"product", "title":"商品管理", "title2":"Products", "icon": "tree", "path": "product", "roles": ["ROLE_ADMIN", "ROLE_USER"], "children": [
-    {"name":"index", "title":"商品列表", "title2":"ProductsList", "path":"product/index", "icon":"form", "roles": ["ROLE_USER"]},
-    {"name":"add", "title":"添加商品", "title2":"ProductsAdd", "path":"product/add", "icon":"form", "roles": ["ROLE_USER"]},
-    {"name":"all", "title":"全部商品", "title2":"ProductsAllList", "path":"product/all", "icon":"form", "roles": ["ROLE_ADMIN"]}
-  ]},
-
-  {"name":"delivery", "title":"配送管理", "title2":"Delivery", "icon": "tree", "path": "delivery", "roles": ["ROLE_ADMIN"], "children": [
-    {"name":"order", "title":"配送订单列表", "title2":"DeliveryOrder", "path":"delivery/order", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"rider", "title":"配送员列表", "title2":"DeliveryRiderOrder", "path":"delivery/rider", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"preferences", "title":"配送设置", "title2":"DeliveryPreferences", "path":"delivery/preferences", "icon":"form", "roles": ["ROLE_ADMIN"]}
-  ]},
-
-  {"name":"comment", "title":"评价管理", "title2":"Comments", "icon": "form", "path": "comment/index", "roles": ["ROLE_ADMIN", "ROLE_USER"]},
-
-  {"name":"store", "title":"店铺管理", "title2":"Store", "icon": "tree", "path": "store", "roles": ["ROLE_USER"], "children": [
-    {"name":"store", "title":"店铺列表", "title2":"StoreList", "icon": "form", "path": "store/index", "roles": ["ROLE_USER"]},
-    {"name":"category", "title":"店铺分组", "title2":"StoreCategory", "path":"store/category", "icon":"form", "roles": ["ROLE_USER"], "hidden": true}
-  ]},
-
-  {"name":"tax", "title":"税率管理", "title2":"Tax", "icon": "form", "path": "tax/index", "roles": ["ROLE_ADMIN"]},
-
-  {"name":"original", "title":"原创内容", "title2":"OriginalContent", "icon": "tree", "path": "original", "roles": ["ROLE_ADMIN"], "children":[
-    {"name":"PGCList", "title":"PGC管理", "title2":"PGCList", "path":"original/pgc-list", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"UGCList", "title":"UGC管理", "title2":"UGCList", "path":"original/ugc-list", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"UGCReport", "title":"举报处理", "title2":"UGCReport", "path":"original/ugc-report", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"PGCChange", "title":"发布文章", "title2":"PGCChange", "path":"original/pgc-change", "icon":"form", "roles": ["ROLE_ADMIN"], "hidden": true }
-  ]},
-
-  {"name":"customer", "title":"用户管理", "title2":"Customer", "icon": "tree", "path": "customer", "roles": ["ROLE_ADMIN"], "children":[
-    {"name":"customerNative", "title":"C端用户", "title2":"CustomerNative", "path":"customer/index", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"customerInside", "title":"内测用户", "title2":"CustomerInside", "path":"customer/inside", "icon":"form", "roles": ["ROLE_ADMIN"]}
-  ]},
-
-  {"name":"merchantSettings", "title":"商户设置", "title2":"MerchantSettings", "icon": "tree", "path": "merchantSettings", "roles": ["ROLE_USER"], "children": [
-    {"name":"info", "title":"资料修改", "title2":"MerchantSettingsProfile", "path":"merchantSettings/info", "icon":"form", "roles": ["ROLE_USER"]},
-    {"name":"preferences", "title":"参数设置", "title2":"MerchantSettingsPreferences", "path":"merchantSettings/preferences", "icon":"form", "roles": ["ROLE_USER"]},
-    {"name":"password", "title":"密码修改", "title2":"MerchantSettingsChangePassword", "path":"merchantSettings/password", "icon":"form", "roles": ["ROLE_USER"]}
-  ]},
-
-  {"name":"asset", "title":"资产管理", "title2":"Asset", "icon": "form", "path": "asset/index", "roles": ["ROLE_USER"]},
-
-  {"name":"native", "title":"APP管理", "title2":"App", "icon": "tree", "path": "native", "roles": ["ROLE_ADMIN"], "children": [
-    {"name":"index", "title":"首页主广告", "title2":"AppAdvertisementPrimary", "path":"native/index", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"sidebar", "title":"首页副广告", "title2":"AppAdvertisementSecondary", "path":"native/sidebar", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"carefully", "title":"精选分类", "title2":"AppEssentialCategory", "path":"native/carefully", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"tag", "title":"话题分类", "title2":"AppTagCategory", "path":"native/tag", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"topic", "title":"平台话题", "title2":"AppTagCategoryTopic", "path":"native/topic", "icon":"form", "roles": ["ROLE_ADMIN"], "hidden": true},
-    {"name":"topicRank", "title":"话题榜", "title2":"TopicRank", "path":"native/rank", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"userProtocolEditing", "title":"用户协议编辑", "title2":"UserProtocolEditing", "path":"native/protocols", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"appPush", "title":"App消息推送", "title2":"AppPush", "path":"native/push", "icon":"form", "roles": ["ROLE_ADMIN"]}
-  ]},
-  {"name":"activity", "title":"活动管理", "title2":"Activity", "icon": "tree", "path": "activity", "roles": ["ROLE_ADMIN"], "children": [
-    {"name":"category", "title":"活动类型", "title2":"ActivityCategory", "path":"activity/category", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"index", "title":"活动列表", "title2":"ActivityList", "path":"activity/index", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"audit", "title":"活动审核", "title2":"ActivityAudit", "path":"activity/audit", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"ad", "title":"活动广告", "title2":"ActivityAd", "path":"activity/ad", "icon":"form", "roles": ["ROLE_ADMIN"]},
-    {"name":"detail", "title":"活动详情", "title2":"ActivityDetail", "path":"activity/detail", "icon":"form", "roles": ["ROLE_ADMIN"], "hidden": true}
-  ]},
-  {"name":"statistics", "title":"数据统计", "title2":"Statistics", "icon": "tree", "path": "statistics", "roles": ["ROLE_ADMIN"], "hidden": true, "children": [
-    {"name":"userAnalysis", "title":"用户分析", "title2":"UserAnalysis", "path":"statistics/user", "icon":"form", "roles": ["ROLE_ADMIN"], "hidden": true},
-    {"name":"articleAnalysis", "title":"内容分析", "title2":"ArticleAnalysis", "path":"statistics/article", "icon":"form", "roles": ["ROLE_ADMIN"], "hidden": true},
-    {"name":"activityAnalysis", "title":"活动分析", "title2":"ActivityAnalysis", "path":"statistics/activity", "icon":"form", "roles": ["ROLE_ADMIN"], "hidden": true}
+  ,{"name":"example", "title":"综合实例", "title2":"Example", "icon": "example", "path": "example", "roles": ["ROLE_ADMIN"], "children": [
+    {"name":"create", "title":"创建文章", "title2":"CreateArticle", "path": "example/create", "icon": "edit", "roles": ["ROLE_ADMIN"]},
+    {"name":"list", "title":"文章列表", "title2":"ArticleList", "path": "example/list", "icon": "list", "roles": ["ROLE_ADMIN"]}
   ]}
 ]

@@ -23,13 +23,13 @@ public class PermissionEntity implements Serializable {
     }
 
     @Id
-    private String id;
+    protected String id;
 
-    private String name;
+    protected String name;
 
-    private String description;
+    protected String description;
 
-    private String url;
+    protected String url;
 
-    private String method;
+    protected String method;
 }

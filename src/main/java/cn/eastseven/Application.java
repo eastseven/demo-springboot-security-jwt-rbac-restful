@@ -136,9 +136,15 @@ public class Application implements CommandLineRunner {
                     UserEntity user = new UserEntity(username, passwordEncoder.encode("123456"));
                     user.setFirstname(faker.name().firstName());
                     user.setLastname(faker.name().lastName());
+                    user.setEmail(user.getLastname() + "." + user.getFirstname() + "@fakemail.com");
                     user.getRoles().add(role);
+                    if (role.getId().equals("ROLE_ADMIN")) {
+                        user.setEnabled(true);
+                    } else if (role.getId().equals("ROLE_USER")) {
+                        user.setEnabled(false);
+                    }
                     ctx.getBean(UserRepository.class).save(user);
-                    log.info("系统用户：username=[{}], password=[123456]", user.getUsername());
+                    log.info("系统用户：username=[{}], password=[123456], enabled=[{}]", user.getUsername(), user.getEnabled());
                 });
             }
         }

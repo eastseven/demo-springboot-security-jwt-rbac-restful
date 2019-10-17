@@ -1,16 +1,22 @@
 package cn.eastseven.api.impl;
 
+import cn.eastseven.api.MenuResource;
+import cn.eastseven.api.dto.MenuDTO;
+import cn.eastseven.api.dto.MenuSimpleDTO;
 import cn.eastseven.model.ApiResponse;
 import cn.eastseven.security.JwtUser;
 import cn.eastseven.security.annotation.CurrentUser;
-import cn.eastseven.api.MenuResource;
-import cn.eastseven.api.dto.MenuDTO;
 import cn.eastseven.security.model.MenuEntity;
+import cn.eastseven.security.repository.MenuRepository;
 import cn.eastseven.service.MenuService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -25,10 +31,21 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping(value = "/menu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class MenuResourceImpl implements MenuResource {
 
+    @Autowired
+    private MenuRepository menuRepository;
+
     private final MenuService menuService;
 
     public MenuResourceImpl(MenuService menuService) {
         this.menuService = menuService;
+    }
+
+    @GetMapping("list")
+    @Override
+    public ApiResponse list(@RequestParam(defaultValue = "1") int page,
+                            @RequestParam(name = "limit", defaultValue = "10") int size) {
+        Page<MenuEntity> pageResult = menuRepository.findAll(PageRequest.of(page - 1, size));
+        return ApiResponse.of(pageResult.map(MenuSimpleDTO::new));
     }
 
     @GetMapping("/all")

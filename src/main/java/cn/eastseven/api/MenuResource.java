@@ -7,7 +7,7 @@ import springfox.documentation.annotations.ApiIgnore;
 /**
  * @author eastseven
  */
-public interface MenuResource {
+public interface MenuResource extends CrudApiResource {
 
     /**
      * 所以菜单

@@ -7,6 +7,8 @@ import cn.eastseven.security.repository.UserRepository;
 import cn.eastseven.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -47,5 +49,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity get(String id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("用户不存在"));
+    }
+
+    @Override
+    public Page<UserEntity> page(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 }
